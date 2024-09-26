@@ -5,30 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Decision Table Calculator</title>
-    <style>
-        table,
-        th,
-        td {
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 10px;
-            text-align: center;
-            max-width: fit-content;
-        }
-
-        button {
-            margin: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <h1>Decision Table Calculator</h1>
-
+    <div class="fixed-header">
+        <h2>Decision Table Calculator</h2>
+    </div>
     <table id="decisionTable">
         <tr>
             <th></th>
@@ -37,39 +20,68 @@
         </tr>
         <tr>
             <td>s1</td>
-            <td><input type="number"></td>
-            <td><input type="number"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
         </tr>
         <tr>
             <td>s2</td>
-            <td><input type="number"></td>
-            <td><input type="number"></td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
         </tr>
     </table>
-
-    <button onclick="addRow()">Add Sn</button>
-    <button onclick="removeRow()">Remove Sn</button>
     <br>
-    <button onclick="addColumn()">Add An</button>
-    <button onclick="removeColumn()">Remove An</button>
-    <br>
+    <div>
+        <button onclick="addSn()">Add Sn</button>
+        <button onclick="removeSn()">Remove Sn</button>
+    </div>
+    <div>
+        <button onclick="addAn()">Add An</button>
+        <button onclick="removeAn()">Remove An</button>
+    </div>
     <button onclick="transposeTable()">Transpose Table</button>
     <br>
-
-    <label for="alpha">Hurwicz Optimism Index (α): </label>
-    <input type="number" id="alpha" step="0.01" value="0.5">
+    <div>
+        <label for="alpha">Hurwicz Optimism Index (α): </label>
+        <input type="number" id="alpha" step="0.01" value="0.5">
+    </div>
     <br>
 
     <button onclick="calculate()">Calculate Criteria</button>
 
-    <h2>Results:</h2>
-    <p id="maximax">MaxiMax: </p>
-    <p id="maximin">MaxiMin: </p>
-    <p id="minimaxRegret">miniMax Regret: </p>
-    <p id="hurwicz">Hurwicz Optimism: </p>
-    <p id="laplace">Laplace's Principle: </p>
-
-    <script src="script.js"></script>
+    <h3>Results:</h3>
+    <table id="results">
+        <tr>
+            <th>Rule</th>
+            <th>Results</th>
+            <th>Select</th>
+        </tr>
+        <tr>
+            <td>MaxiMax</td>
+            <td id="maximax"></td>
+            <td id="maximaxSel"></td>
+        </tr>
+        <tr>
+            <td>Maximin</td>
+            <td id="maximin"></td>
+            <td id="maximinSel"></td>
+        </tr>
+        <tr>
+            <td>miniMax Regret</td>
+            <td id="minimaxRegret"></td>
+            <td id="minimaxRegretSel"></td>
+        </tr>
+        <tr>
+            <td>Hurwicz Optimism</td>
+            <td id="hurwicz"></td>
+            <td id="hurwiczSel"></td>
+        </tr>
+        <tr>
+            <td>Laplace's Principle</td>
+            <td id="laplace"></td>
+            <td id="laplaceSel"></td>
+        </tr>
+        </table>
+        <script src="script.js"></script>
 </body>
 
 </html>

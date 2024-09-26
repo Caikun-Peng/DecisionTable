@@ -1,15 +1,16 @@
-// JavaScript for dynamically managing the decision table and calculating criteria
+// Global variable
+var trans_flag = 0;
 
 // Add a new row (decision)
-function addRow() {
+function addRow(rowClass) {
     let table = document.getElementById("decisionTable");
     let newRow = table.insertRow(-1);
     let cell = newRow.insertCell(0);
-    cell.innerHTML = `s${table.rows.length - 1}`;
+    cell.innerHTML = rowClass+`${table.rows.length - 1}`;
 
     for (let i = 1; i < table.rows[0].cells.length; i++) {
         let cell = newRow.insertCell(i);
-        cell.innerHTML = `<input type="number">`;
+        cell.innerHTML = `<input type="text">`;
     }
 }
 
@@ -22,15 +23,15 @@ function removeRow() {
 }
 
 // Add a new column (state)
-function addColumn() {
+function addColumn(colClass) {
     let table = document.getElementById("decisionTable");
     let header = table.rows[0];
     let newCell = header.insertCell(-1);
-    newCell.innerHTML = `A${header.cells.length - 1}`;
+    newCell.innerHTML = colClass+`${header.cells.length - 1}`;
 
     for (let i = 1; i < table.rows.length; i++) {
         let cell = table.rows[i].insertCell(-1);
-        cell.innerHTML = `<input type="number">`;
+        cell.innerHTML = `<input type="text">`;
     }
 }
 
@@ -41,6 +42,39 @@ function removeColumn() {
         for (let i = 0; i < table.rows.length; i++) {
             table.rows[i].deleteCell(-1);
         }
+    }
+}
+
+function addSn() {
+    if (trans_flag === 0) {
+        addRow('s')
+    } else {
+        addColumn('s')
+    }
+}
+
+function addAn() {
+    if (trans_flag === 0) {
+        addColumn('A')
+    } else {
+        addRow('A')
+    }
+
+}
+
+function removeSn() {
+    if (trans_flag === 0) {
+        removeRow()
+    } else {
+        removeColumn()
+    }
+}
+
+function removeAn() {
+    if (trans_flag === 0) {
+        removeColumn()
+    } else {
+        removeRow()
     }
 }
 
@@ -72,12 +106,14 @@ function transposeTable() {
             } else {
                 // Create a new input element for decision/state values
                 let input = document.createElement("input");
-                input.type = "number";
+                input.type = "text";
                 input.value = data[j][i];
                 newCell.appendChild(input);
             }
         }
     }
+
+    trans_flag = (trans_flag + 1) % 2;
 }
 
 // Calculate decision criteria and display the selected decision names based on table names
@@ -104,17 +140,24 @@ function calculate() {
         return decisions[index].name;
     }
 
+    function checkIndifference(values) {
+        // Check if all elements in an array are the same
+        return new Set(values).size === 1;
+    }
+
     // MaxiMax
     let maximaxValues = decisions.map(decision => Math.max(...decision.values));
     let maximaxResult = Math.max(...maximaxValues);
     let maximaxIndex = maximaxValues.indexOf(maximaxResult);
-    document.getElementById("maximax").innerHTML = `MaxiMax: ${maximaxResult}, Selected: ${getDecisionName(maximaxIndex)}`;
+    document.getElementById("maximax").innerHTML = `${maximaxResult}`;
+    document.getElementById("maximaxSel").innerHTML = checkIndifference(maximaxValues) ? "Indifferent" : `${getDecisionName(maximaxIndex)}`;
 
     // MaxiMin
     let maximinValues = decisions.map(decision => Math.min(...decision.values));
     let maximinResult = Math.max(...maximinValues);
     let maximinIndex = maximinValues.indexOf(maximinResult);
-    document.getElementById("maximin").innerHTML = `MaxiMin: ${maximinResult}, Selected: ${getDecisionName(maximinIndex)}`;
+    document.getElementById("maximin").innerHTML = `${maximinResult}`;
+    document.getElementById("maximinSel").innerHTML = checkIndifference(maximinValues) ? "Indifferent" : `${getDecisionName(maximinIndex)}`;
 
     // miniMax Regret
     let states = decisions[0].values.length;
@@ -131,18 +174,21 @@ function calculate() {
     );
     let minMaxRegretResult = Math.min(...maxRegretValues);
     let minMaxRegretIndex = maxRegretValues.indexOf(minMaxRegretResult);
-    document.getElementById("minimaxRegret").innerHTML = `miniMax Regret: ${minMaxRegretResult}, Selected: ${getDecisionName(minMaxRegretIndex)}`;
+    document.getElementById("minimaxRegret").innerHTML = `${minMaxRegretResult}`;
+    document.getElementById("minimaxRegretSel").innerHTML = checkIndifference(maxRegretValues) ? "indifferent" : `${getDecisionName(minMaxRegretIndex)}`;
 
     // Hurwicz’s optimism (α from user input)
     let alpha = parseFloat(document.getElementById("alpha").value);
     let hurwiczValues = decisions.map(decision => alpha * Math.max(...decision.values) + (1 - alpha) * Math.min(...decision.values));
     let hurwiczResult = Math.max(...hurwiczValues);
     let hurwiczIndex = hurwiczValues.indexOf(hurwiczResult);
-    document.getElementById("hurwicz").innerHTML = `Hurwicz Optimism (α = ${alpha}): ${hurwiczResult}, Selected: ${getDecisionName(hurwiczIndex)}`;
+    document.getElementById("hurwicz").innerHTML = `${hurwiczResult}`;
+    document.getElementById("hurwiczSel").innerHTML = checkIndifference(hurwiczValues) ? "indifferent" : `${getDecisionName(hurwiczIndex)}`;
 
     // Laplace's principle
     let laplaceValues = decisions.map(decision => decision.values.reduce((a, b) => a + b, 0) / decision.values.length);
     let laplaceResult = Math.max(...laplaceValues);
     let laplaceIndex = laplaceValues.indexOf(laplaceResult);
-    document.getElementById("laplace").innerHTML = `Laplace's Principle: ${laplaceResult}, Selected: ${getDecisionName(laplaceIndex)}`;
+    document.getElementById("laplace").innerHTML = `${laplaceResult}`;
+    document.getElementById("laplaceSel").innerHTML = checkIndifference(laplaceValues) ? "indifferent" : `${getDecisionName(laplaceIndex)}`;
 }
