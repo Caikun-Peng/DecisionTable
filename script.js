@@ -80,65 +80,69 @@ function transposeTable() {
     }
 }
 
-// Calculate decision criteria and check for indifference
+// Calculate decision criteria and display the selected decision names based on table names
 function calculate() {
     let table = document.getElementById("decisionTable");
     let decisions = [];
+    let rows = Array.from(table.getElementsByTagName("tr")).slice(1); // Get all decision rows
 
-    // Extract decision table data
-    for (let i = 1; i < table.rows.length; i++) {
+    // Extract decision table data and names
+    for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName('input');
         let row = [];
-        for (let j = 1; j < table.rows[i].cells.length; j++) {
-            let value = table.rows[i].cells[j].getElementsByTagName('input')[0].value;
-            row.push(parseFloat(value) || 0);
+        for (let cell of cells) {
+            row.push(parseFloat(cell.value) || 0);
         }
-        decisions.push(row);
+        decisions.push({
+            name: rows[i].cells[0].innerText.trim(), // Get decision name from the first cell
+            values: row
+        });
     }
 
-    function checkIndifference(values) {
-        // Check if all elements in an array are the same
-        return new Set(values).size === 1;
+    // Function to get the decision name
+    function getDecisionName(index) {
+        return decisions[index].name;
     }
 
     // MaxiMax
-    let maximaxValues = decisions.map(row => Math.max(...row));
+    let maximaxValues = decisions.map(decision => Math.max(...decision.values));
     let maximaxResult = Math.max(...maximaxValues);
-    document.getElementById("maximax").innerHTML = `MaxiMax: ${maximaxResult}` +
-        (checkIndifference(maximaxValues) ? " (indifferent)" : "");
+    let maximaxIndex = maximaxValues.indexOf(maximaxResult);
+    document.getElementById("maximax").innerHTML = `MaxiMax: ${maximaxResult}, Selected: ${getDecisionName(maximaxIndex)}`;
 
     // MaxiMin
-    let maximinValues = decisions.map(row => Math.min(...row));
+    let maximinValues = decisions.map(decision => Math.min(...decision.values));
     let maximinResult = Math.max(...maximinValues);
-    document.getElementById("maximin").innerHTML = `MaxiMin: ${maximinResult}` +
-        (checkIndifference(maximinValues) ? " (indifferent)" : "");
+    let maximinIndex = maximinValues.indexOf(maximinResult);
+    document.getElementById("maximin").innerHTML = `MaxiMin: ${maximinResult}, Selected: ${getDecisionName(maximinIndex)}`;
 
     // miniMax Regret
-    let states = decisions[0].length;
+    let states = decisions[0].values.length;
     let maxInState = [];
     for (let j = 0; j < states; j++) {
         let max = -Infinity;
-        for (let i = 0; i < decisions.length; i++) {
-            max = Math.max(max, decisions[i][j]);
+        for (let decision of decisions) {
+            max = Math.max(max, decision.values[j]);
         }
         maxInState.push(max);
     }
-    let maxRegretValues = decisions.map(row =>
-        Math.max(...row.map((value, index) => maxInState[index] - value))
+    let maxRegretValues = decisions.map(decision =>
+        Math.max(...decision.values.map((value, index) => maxInState[index] - value))
     );
     let minMaxRegretResult = Math.min(...maxRegretValues);
-    document.getElementById("minimaxRegret").innerHTML = `miniMax Regret: ${minMaxRegretResult}` +
-        (checkIndifference(maxRegretValues) ? " (indifferent)" : "");
+    let minMaxRegretIndex = maxRegretValues.indexOf(minMaxRegretResult);
+    document.getElementById("minimaxRegret").innerHTML = `miniMax Regret: ${minMaxRegretResult}, Selected: ${getDecisionName(minMaxRegretIndex)}`;
 
     // Hurwicz’s optimism (α from user input)
     let alpha = parseFloat(document.getElementById("alpha").value);
-    let hurwiczValues = decisions.map(row => alpha * Math.max(...row) + (1 - alpha) * Math.min(...row));
+    let hurwiczValues = decisions.map(decision => alpha * Math.max(...decision.values) + (1 - alpha) * Math.min(...decision.values));
     let hurwiczResult = Math.max(...hurwiczValues);
-    document.getElementById("hurwicz").innerHTML = `Hurwicz Optimism (α = ${alpha}): ${hurwiczResult}` +
-        (checkIndifference(hurwiczValues) ? " (indifferent)" : "");
+    let hurwiczIndex = hurwiczValues.indexOf(hurwiczResult);
+    document.getElementById("hurwicz").innerHTML = `Hurwicz Optimism (α = ${alpha}): ${hurwiczResult}, Selected: ${getDecisionName(hurwiczIndex)}`;
 
     // Laplace's principle
-    let laplaceValues = decisions.map(row => row.reduce((a, b) => a + b, 0) / row.length);
+    let laplaceValues = decisions.map(decision => decision.values.reduce((a, b) => a + b, 0) / decision.values.length);
     let laplaceResult = Math.max(...laplaceValues);
-    document.getElementById("laplace").innerHTML = `Laplace's Principle: ${laplaceResult}` +
-        (checkIndifference(laplaceValues) ? " (indifferent)" : "");
+    let laplaceIndex = laplaceValues.indexOf(laplaceResult);
+    document.getElementById("laplace").innerHTML = `Laplace's Principle: ${laplaceResult}, Selected: ${getDecisionName(laplaceIndex)}`;
 }
