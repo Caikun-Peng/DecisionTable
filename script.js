@@ -175,7 +175,7 @@ function calculate() {
     let minMaxRegretResult = Math.min(...maxRegretValues);
     let minMaxRegretIndex = maxRegretValues.indexOf(minMaxRegretResult);
     document.getElementById("minimaxRegret").innerHTML = `${minMaxRegretResult}`;
-    document.getElementById("minimaxRegretSel").innerHTML = checkIndifference(maxRegretValues) ? "indifferent" : `${getDecisionName(minMaxRegretIndex)}`;
+    document.getElementById("minimaxRegretSel").innerHTML = checkIndifference(maxRegretValues) ? "Indifferent" : `${getDecisionName(minMaxRegretIndex)}`;
 
     // Hurwicz’s optimism (α from user input)
     let alpha = parseFloat(document.getElementById("alpha").value);
@@ -183,12 +183,12 @@ function calculate() {
     let hurwiczResult = Math.max(...hurwiczValues);
     let hurwiczIndex = hurwiczValues.indexOf(hurwiczResult);
     document.getElementById("hurwicz").innerHTML = `${hurwiczResult}`;
-    document.getElementById("hurwiczSel").innerHTML = checkIndifference(hurwiczValues) ? "indifferent" : `${getDecisionName(hurwiczIndex)}`;
+    document.getElementById("hurwiczSel").innerHTML = checkIndifference(hurwiczValues) ? "Indifferent" : `${getDecisionName(hurwiczIndex)}`;
 
     // Laplace's principle
     let laplaceValues = decisions.map(decision => decision.values.reduce((a, b) => a + b, 0) / decision.values.length);
     let laplaceResult = Math.max(...laplaceValues);
     let laplaceIndex = laplaceValues.indexOf(laplaceResult);
     document.getElementById("laplace").innerHTML = `${laplaceResult}`;
-    document.getElementById("laplaceSel").innerHTML = checkIndifference(laplaceValues) ? "indifferent" : `${getDecisionName(laplaceIndex)}`;
+    document.getElementById("laplaceSel").innerHTML = checkIndifference(laplaceValues) ? "Indifferent" : `${getDecisionName(laplaceIndex)}`;
 }
