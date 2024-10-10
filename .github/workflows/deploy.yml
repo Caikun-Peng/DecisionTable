@@ -20,8 +20,10 @@ jobs:
           verbose: true
 
       - name: Ensure _site directory exists
-        run: mkdir -p ./_site  # 创建 _site 目录（如果它不存在）
-
+        run: | 
+          mkdir -p ./_site  # 创建 _site 目录（如果它不存在）
+          sudo chmod -R 777 ./_site  # 强制为 _site 目录设置写权限
+        
       - name: Create CNAME file for custom domain
         run: echo 'example.site' > ./_site/CNAME  # CNAME 文件只能包含域名
 
