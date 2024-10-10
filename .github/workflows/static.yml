@@ -13,9 +13,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Create CNAME file for /my-repo
+    - name: Create CNAME file for /DecisionTable
       run: |
-        mkdir -p my-repo
+        mkdir -p DecisionTable
         echo 'choi-p.site' > ./DecisionTable/CNAME
 
     - name: Copy assets (HTML, CSS, JS)
@@ -29,4 +29,4 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./my-repo # 将 /my-repo 目录发布到 GitHub Pages
+        publish_dir: ./DecisionTable # 将 /my-repo 目录发布到 GitHub Pages
