@@ -19,6 +19,9 @@ jobs:
           destination: ./_site/DecisionTable  # 指定将网站内容构建到 /DecisionTable 子目录中
           verbose: true
 
+      - name: Ensure _site directory exists
+        run: mkdir -p ./_site  # 创建 _site 目录（如果它不存在）
+
       - name: Create CNAME file for custom domain
         run: echo 'example.site' > ./_site/CNAME  # CNAME 文件只能包含域名
 
