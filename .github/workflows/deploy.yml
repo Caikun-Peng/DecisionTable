@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+permissions:  # 增加权限配置
+  contents: write
+  pages: write
+  id-token: write  # 关键权限，确保拥有 id-token
+
 jobs:
   build:
     runs-on: ubuntu-latest
